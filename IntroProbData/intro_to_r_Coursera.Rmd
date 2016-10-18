@@ -255,7 +255,7 @@ followed by the name of the function that you're interested in. Try the followin
 your console:
 
 ```{r plot-help, tidy = FALSE}
-?ggplot
+# ?ggplot
 ```
 
 Notice that the help file replaces the plot in the lower right panel. You can 
@@ -432,7 +432,15 @@ decreased over time.
 
 ```{r prop-boys-over-time}
 # type your code for Question 5 here, and Knit
+present <- present %>%
+  mutate(total = boys + girls)
 
+present <- present %>%
+  mutate(proportion_boys = boys / total)
+
+ggplot(data = present, aes(x = year, y = proportion_boys)) +
+  geom_line() +
+  geom_point()
 ```
 
 
@@ -447,7 +455,8 @@ variable which of the following statements is true?
 
 ```{r more-boys-per-year}
 # type your code for Question 6 here, and Knit
-
+present <- present %>%
+  mutate(more_boys = boys > girls)
 ```
 
 
@@ -463,6 +472,13 @@ variable which of the following statements is true?
 ```{r prop-boy-girl-over-time}
 # type your code for Question 7 here, and Knit
 
+present <- present %>%
+  mutate(proportion_boys_girls = boys / girls)
+
+
+ggplot(data = present, aes(x = year, y = proportion_boys_girls)) +
+  geom_line() +
+  geom_point()
 ```
 
 8. In what year did we see the most total number of births in the U.S.? *Hint:* Sort 
