@@ -1,0 +1,99 @@
+---
+title: "Exploring the BRFSS data"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+## Introduction
+
+
+Behavioral Risk Factor Surveillance System (BRFSS)
+
+http://www.cdc.gov/brfss/
+
+Percentage of US Adults who reported Fair or poor health
+https://www.cdc.gov/chronicdisease/resources/publications/aag/brfss.htm
+Can I generate a map?
+
+
+Minnesota Initiatives
+Minnesota collapsed
+Provide data on current tobacco use to inform initiatives to prevent and reduce tobacco use in Minnesota.
+Plan and evaluate Minnesota public health goals.
+Assess exposure to environmental health risks in the home from lead, asbestos, radon, and well-water contamination.
+Monitor the use of preventive health services and the prevalence of chronic conditions to evaluate the effectiveness of intervention strategies.
+
+## Setup
+
+```{r set-environment}
+setwd('C:/Development/R Projects/Duke/IntroProbData/Course Project')
+```
+
+### Load packages
+
+```{r load-packages, message = FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+### Load data
+
+Make sure your data and R Markdown files are in the same directory. When loaded
+your data file will be called `brfss2013`. Delete this note when before you submit 
+your work. 
+
+```{r load-data}
+brfss <- load("brfss2013.RData")
+```
+
+
+
+* * *
+
+## Part 1: Data
+
+
+* * *
+
+## Part 2: Research questions
+
+**Research quesion 1:**
+
+**Research quesion 2:**
+
+**Research quesion 3:**
+
+
+* * *
+
+## Part 3: Exploratory data analysis
+
+NOTE: Insert code chunks as needed by clicking on the "Insert a new code chunk" 
+button (green button with orange arrow) above. Make sure that your code is visible
+in the project you submit. Delete this note when before you submit your work.
+
+**Research quesion 1:**
+
+```{r}
+
+```
+
+
+
+**Research quesion 2:**
+
+```{r}
+
+```
+
+
+
+**Research quesion 3:**
+
+```{r}
+
+```
+
