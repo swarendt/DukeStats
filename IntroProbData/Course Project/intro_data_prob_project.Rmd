@@ -1,5 +1,7 @@
 ---
 title: "Exploring the BRFSS data"
+author: Scott Arendt
+date: November 8 2016
 output: 
   html_document: 
     fig_height: 4
@@ -7,10 +9,11 @@ output:
     theme: spacelab
 ---
 
-## Introduction
+## Behavioral Risk Factor Surveillance System (BRFSS)
 
+The BRFSS is a collection of health related telephone surveys conducted annually.  There are 400,000 surveys performed each year on a wide variety of health issues and risk behaviors on adult U.S. residents.  The data is collected from all 50 states along with the District of Columbia.
 
-Behavioral Risk Factor Surveillance System (BRFSS)
+The data can be found online at CDC website.  I am using the 2013 set of data for this analysis.
 
 http://www.cdc.gov/brfss/
 
@@ -20,7 +23,7 @@ Can I generate a map?
 
 
 Minnesota Initiatives
-Minnesota collapsed
+
 Provide data on current tobacco use to inform initiatives to prevent and reduce tobacco use in Minnesota.
 Plan and evaluate Minnesota public health goals.
 Assess exposure to environmental health risks in the home from lead, asbestos, radon, and well-water contamination.
@@ -28,7 +31,7 @@ Monitor the use of preventive health services and the prevalence of chronic cond
 
 ## Setup
 
-```{r set-environment}
+```{r set-environment, echo=FALSE}
 setwd('C:/Development/R Projects/Duke/IntroProbData/Course Project')
 ```
 
@@ -45,8 +48,8 @@ Make sure your data and R Markdown files are in the same directory. When loaded
 your data file will be called `brfss2013`. Delete this note when before you submit 
 your work. 
 
-```{r load-data}
-brfss <- load("brfss2013.RData")
+```{r load-data, echo=FALSE}
+load("brfss2013.RData")
 ```
 
 
@@ -60,7 +63,7 @@ brfss <- load("brfss2013.RData")
 
 ## Part 2: Research questions
 
-**Research quesion 1:**
+**Does the amount of sleep have any correlation to the general feeling of wellness?  Is there a difference between men and women?**
 
 **Research quesion 2:**
 
@@ -97,3 +100,98 @@ in the project you submit. Delete this note when before you submit your work.
 
 ```
 
+## Appendix A - Code Book
+
+I am listing a subset of the code book, describing only the columns that I used in my analysis.  It would be impractical to include the entire code book in this Appendix.
+
+General Health
+Section: 1.1 Health Status Type: Num
+Column: 80 SAS Variable Name: GENHLTH
+Prologue:
+Description: Would you say that in general your health is:
+
+Value Value Label
+1     Excellent
+2     Very good
+3     Good
+4     Fair
+5     Poor
+7     Don't know/Not Sure
+9     Refused
+BLANK Not asked or Missing
+
+Number of Days Physical Health Not Good
+Section: 2.1 Healthy Days - Health-Related Quality of Life Type: Num
+Column: 81-82 SAS Variable Name: PHYSHLTH
+Prologue:
+Description: Now thinking about your physical health, which includes physical illness and injury, for how many days during the
+past 30 days was your physical health not good?
+Value Value Label 
+1 - 30 Number of days
+88    None
+77    Don't know/Not sure
+99    Refused
+BLANK Not asked or Missing 
+
+
+Number of Days Mental Health Not Good
+Section: 2.2 Healthy Days - Health-Related Quality of Life Type: Num
+Column: 83-84 SAS Variable Name: MENTHLTH
+Prologue:
+Description: Now thinking about your mental health, which includes stress, depression, and problems with emotions, for how
+many days during the past 30 days was your mental health not good?
+Value Value Label Frequency Percentage
+Weighted
+Percentage
+1 - 30 Number of days 148,648 30.23 33.18
+Notes: _ _ Number of days
+88 None 334,490 68.02 65.13
+77 Don't know/Not sure 6,336 1.29 1.20
+99 Refused 2,290 0.47 0.49
+BLANK Not asked or Missing 
+
+
+Poor Physical or Mental Health
+Section: 2.3 Healthy Days - Health-Related Quality of Life Type: Num
+Column: 85-86 SAS Variable Name: POORHLTH
+Prologue:
+Description: During the past 30 days, for about how many days did poor physical or mental health keep you from doing your
+usual activities, such as self-care, work, or recreation?
+Value Value Label Frequency Percentage
+Weighted
+Percentage
+1 - 30 Number of days
+Notes: _ _ Number of days
+88    None
+77    Don't know/Not sure
+99    Refused
+BLANK Not asked or Missing
+Notes: Sec
+
+
+How Much Time Do You Sleep
+Section: 4.1 Inadequate Sleep Type: Num
+Column: 91-92 SAS Variable Name: SLEPTIM1
+Prologue: I would like to ask you about your sleep pattern.
+Description: On average, how many hours of sleep do you get in a 24-hour period?
+Weighted
+Value   Value Label
+1 - 24  Number of hours [1-24]
+77      Don't know/Not Sure
+99      Refused 
+
+
+Respondents Sex
+Section: 8.21 Demographics Type: Num
+Column: 178 SAS Variable Name: SEX
+Prologue:
+Description: Indicate sex of respondent.
+Value 
+Percentage
+1   Male
+2   Female
+
+
+
+The complete code book is found on the CDC website here:
+http://www.cdc.gov/brfss/annual_data/2013/pdf/codebook13_llcp.pdf

@@ -9,6 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Scott Arendt" />
 
 
 <title>Exploring the BRFSS data</title>
@@ -143,12 +144,23 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Exploring the BRFSS data</h1>
+<h4 class="author"><em>Scott Arendt</em></h4>
+<h4 class="date"><em>November 8 2016</em></h4>
 
 </div>
 
 
+<div id="behavioral-risk-factor-surveillance-system-brfss" class="section level2">
+<h2>Behavioral Risk Factor Surveillance System (BRFSS)</h2>
+<p>The BRFSS is a collection of health related telephone surveys conducted annually. There are 400,000 surveys performed each year on a wide variety of health issues and risk behaviors on adult U.S. residents. The data is collected from all 50 states along with the District of Columbia.</p>
+<p><a href="http://www.cdc.gov/brfss/" class="uri">http://www.cdc.gov/brfss/</a></p>
+<p>Percentage of US Adults who reported Fair or poor health <a href="https://www.cdc.gov/chronicdisease/resources/publications/aag/brfss.htm" class="uri">https://www.cdc.gov/chronicdisease/resources/publications/aag/brfss.htm</a> Can I generate a map?</p>
+<p>Minnesota Initiatives</p>
+<p>Provide data on current tobacco use to inform initiatives to prevent and reduce tobacco use in Minnesota. Plan and evaluate Minnesota public health goals. Assess exposure to environmental health risks in the home from lead, asbestos, radon, and well-water contamination. Monitor the use of preventive health services and the prevalence of chronic conditions to evaluate the effectiveness of intervention strategies.</p>
+</div>
 <div id="setup" class="section level2">
 <h2>Setup</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">'C:/Development/R Projects/Duke/IntroProbData/Course Project'</span>)</code></pre></div>
 <div id="load-packages" class="section level3">
 <h3>Load packages</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
@@ -157,7 +169,6 @@ $(document).ready(function () {
 <div id="load-data" class="section level3">
 <h3>Load data</h3>
 <p>Make sure your data and R Markdown files are in the same directory. When loaded your data file will be called <code>brfss2013</code>. Delete this note when before you submit your work.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;brfss2013.RData&quot;</span>)</code></pre></div>
 <hr />
 </div>
 </div>
@@ -178,6 +189,9 @@ $(document).ready(function () {
 <p><strong>Research quesion 1:</strong></p>
 <p><strong>Research quesion 2:</strong></p>
 <p><strong>Research quesion 3:</strong></p>
+</div>
+<div id="appendix-a---code-book" class="section level2">
+<h2>Appendix A - Code Book</h2>
 </div>
 
 
