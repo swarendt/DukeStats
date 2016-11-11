@@ -65,6 +65,8 @@ load("brfss2013.RData")
 
 **Does the amount of sleep have any correlation to the general feeling of wellness?  Is there a difference between men and women?**
 
+
+
 **Research quesion 2:**
 
 **Research quesion 3:**
@@ -81,6 +83,16 @@ in the project you submit. Delete this note when before you submit your work.
 **Research quesion 1:**
 
 ```{r}
+# Build data representing the sleep time and general health.  Do I want to include physical and mental health days
+brfss2013 %>%
+  filter(!is.na(genhlth)) %>%
+  filter(!is.na(sleptim1)) %>%
+  select(X_state, genhlth, physhlth, menthlth, sleptim1)
+
+brfss2013 %>%
+  filter(!is.na(genhlth)) %>%
+  group_by(genhlth) %>%
+  summarise(count = n())
 
 ```
 
