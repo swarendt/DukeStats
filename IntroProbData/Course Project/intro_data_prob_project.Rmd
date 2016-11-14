@@ -65,9 +65,7 @@ load("brfss2013.RData")
 
 **Does the amount of sleep have any correlation to the general feeling of wellness?  Is there a difference between men and women?**
 
-
-
-**Research quesion 2:**
+**Smoking and Income Correlation**
 
 **Research quesion 3:**
 
@@ -76,25 +74,30 @@ load("brfss2013.RData")
 
 ## Part 3: Exploratory data analysis
 
-NOTE: Insert code chunks as needed by clicking on the "Insert a new code chunk" 
-button (green button with orange arrow) above. Make sure that your code is visible
-in the project you submit. Delete this note when before you submit your work.
-
 **Research quesion 1:**
 
 ```{r}
 # Build data representing the sleep time and general health.  Do I want to include physical and mental health days
-brfss2013 %>%
-  filter(!is.na(genhlth)) %>%
-  filter(!is.na(sleptim1)) %>%
-  select(X_state, genhlth, physhlth, menthlth, sleptim1)
+# brfss2013 %>%
+#   filter(!is.na(genhlth)) %>%
+#   group_by(genhlth) %>%
+#   summarise(count = n()) 
+# 
+# brfss2013 %>%
+#   filter(!is.na(sleptim1)) %>%
+#   filter(sleptim1<=24) %>%
+#   group_by(as.numeric(sleptim1)) %>%
+#   summarise(count = n()) %>%
+#   str()
 
-brfss2013 %>%
-  filter(!is.na(genhlth)) %>%
-  group_by(genhlth) %>%
-  summarise(count = n())
-
+sleepANDhealth <-
+  brfss2013 %>%
+    filter(!is.na(genhlth)) %>%
+    filter(!is.na(sleptim1)) %>%
+    filter(sleptim1 <= 24) %>%
+    select(genhlth, sleptim1)
 ```
+
 
 
 
@@ -131,52 +134,6 @@ Value Value Label
 7     Don't know/Not Sure
 9     Refused
 BLANK Not asked or Missing
-
-Number of Days Physical Health Not Good
-Section: 2.1 Healthy Days - Health-Related Quality of Life Type: Num
-Column: 81-82 SAS Variable Name: PHYSHLTH
-Prologue:
-Description: Now thinking about your physical health, which includes physical illness and injury, for how many days during the
-past 30 days was your physical health not good?
-Value Value Label 
-1 - 30 Number of days
-88    None
-77    Don't know/Not sure
-99    Refused
-BLANK Not asked or Missing 
-
-
-Number of Days Mental Health Not Good
-Section: 2.2 Healthy Days - Health-Related Quality of Life Type: Num
-Column: 83-84 SAS Variable Name: MENTHLTH
-Prologue:
-Description: Now thinking about your mental health, which includes stress, depression, and problems with emotions, for how
-many days during the past 30 days was your mental health not good?
-Value Value Label
-1 - 30 Number of days
-Notes: _ _ Number of days
-88    None
-77    Don't know/Not sure
-99    Refused
-BLANK Not asked or Missing 
-
-
-Poor Physical or Mental Health
-Section: 2.3 Healthy Days - Health-Related Quality of Life Type: Num
-Column: 85-86 SAS Variable Name: POORHLTH
-Prologue:
-Description: During the past 30 days, for about how many days did poor physical or mental health keep you from doing your
-usual activities, such as self-care, work, or recreation?
-Value Value Label Frequency Percentage
-Weighted
-Percentage
-1 - 30 Number of days
-Notes: _ _ Number of days
-88    None
-77    Don't know/Not sure
-99    Refused
-BLANK Not asked or Missing
-Notes: Sec
 
 
 How Much Time Do You Sleep
