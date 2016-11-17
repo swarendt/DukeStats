@@ -247,7 +247,7 @@ What went wrong? The reason why all of the results were reported as NAs is that 
 Most numerical summary functions allow us to easily exclude `NA`s with the `na.rm` argument. See the help documentation for the `median` function for more information.
 
 ```{r see_help}
-?median
+# ?median
 ```
 
 An alternative approach is just to `filter` out the `NA`s first, and then ask for the numerical summaries:
