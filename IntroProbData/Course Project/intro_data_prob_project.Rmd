@@ -86,15 +86,15 @@ Looking over the histogram of sleep times from the survey respondents, I can see
 
 Hours of Sleep | Category
 -------------- | -------------
-0 through 4 | Very sleep deprived
+0 through 4 | Significantly sleep deprived
 5 and 6 | Sleep deprived
 7 through 9 | Average sleep
 10 and 11 | Oversleeping
-12 through 24 | Very oversleeping
+12 through 24 | Significant oversleeping
 
 ```{r q1categories}
 levels <- c(-Inf, 5, 6.8, 9.8, 11.8, Inf)
-labels <- c("Very Sleep Deprived", "Sleep Deprived", "Average", "Oversleeping", "Very Oversleeping")
+labels <- c("Significantly Sleep Deprived", "Sleep Deprived", "Average", "Oversleeping", "Significant Oversleeping")
 
 sleepANDhealth <- sleepANDhealth %>% 
   mutate(sleepcat = cut(sleptim1, levels, labels = labels))
@@ -120,7 +120,7 @@ What cannot be concluded here is whether getting the recommended sleep improves 
 
 **Research question 3:**
 
-Given that a random survey respondent is a woman, what is the percentage that the respondent smokes?
+If I choose a random survey respondent who smokes, what is the probability of the respondent being a female?
 
 I will create another new data set for my data analysis.  I am going to remove all records that do not have the gender selected (this removes 7 records).  Determining whether someone is a smoker and that we have valid data is a little more complicated.  The SMOKE100 column indicates whether someone has smoked 100 cigarettes in their lifetime.  Values other than 1 or 2 have no meaning in my analysis and so I will filter them out.
 
@@ -134,27 +134,45 @@ smoke100 | smokday2 | Smoker
 1 | 3 | No, these are former smokers.
 1 | 1 and 2 | Yes
 
+Once these filters are in place, we are left with a total of 476442 records.
 
-```{r}
+```{r q3filtering}
 
 genderANDsmoking <-
   brfss2013 %>%
     filter(!is.na(sex)) %>%
     filter(!is.na(smoke100)) %>%
     filter(smoke100 == 'Yes' & !is.na(smokday2) | smoke100 == 'No') %>%
-    #filter(! smoke100 == 'Yes' & !is.na(smokday2)) %>%
     select(sex, smoke100, smokday2)
 
 genderANDsmoking <- genderANDsmoking %>%
     mutate(smoker = smoke100 == 'Yes' & smokday2 %in% c('Every day','Some days'))
 
-
 genderANDsmoking %>%
     filter() %>%
     group_by(sex, smoke100, smokday2, smoker) %>% 
     summarise(count = n())
-
 ```
+
+Now that I have a clean dataset, with the identification of smoking status in the new smoker column, I can do some analysis on the dataset.  
+
+```{r q3summaries}
+genderANDsmoking %>%
+    filter() %>%
+    group_by(sex) %>% 
+    summarise(count = n())
+
+genderANDsmoking %>%
+    filter() %>%
+    group_by(sex, smoker) %>% 
+    summarise(count = n())
+```
+
+To help determine the answer, I decided to use a probability tree and have inserted my drawing of the tree here.  
+
+![Smoker Decision Tree](GenderSmokingDecisionTree.jpg)
+
+From my drawing above, 
 
 ## Appendix A - Code Book
 
