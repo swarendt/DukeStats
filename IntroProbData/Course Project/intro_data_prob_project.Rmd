@@ -29,6 +29,7 @@ setwd('C:/Development/R Projects/Duke/IntroProbData/Course Project')
 
 library(ggplot2)
 library(dplyr)
+library(reshape2)
 
 load("brfss2013.RData")
 ```
@@ -45,7 +46,7 @@ The 2013 survey contains a collection of 491775 respondents with 330 facts.
 
 **Question 1: Does the amount of sleep have any correlation to the general feeling of wellness?**
 
-**Question 2: Are there any correlations between income and smoking?**
+**Question 2: Are there any correlations between income and receiving flu shots?**
 
 **Question 3: Given that a random survey respondent is a woman, what is the percentage that the respondent smokes?**
 
@@ -55,6 +56,8 @@ The 2013 survey contains a collection of 491775 respondents with 330 facts.
 ## Exploratory data analysis 
 
 **Research question 1:**
+
+This survey includes a question about how the respondents feel in general.  I wondered if there is any relationship between getting a good night's sleep and how people responded about their health.  For this question, I did some research and found that the National Sleep Foundation recommends that adults get between 7 and 9 hours of sleep per night.  This is what I will call "a good night's sleep" for my research.
 
 The first thing that I am doing is creating a clean data set of just two facts: the general health status and the sleep time.  I am cleaning the data by removing all records that have NA for either column.  I am also removing all records that have a sleep time greater than 24 (there were 2).  These have been removed because they are obviously erroneous.  It also seems implausible that records with 0 or 24 hours daily are valid, but I do not have enough information to make a determination on them.  I am choosing to leave them in my data set.
 
@@ -112,11 +115,50 @@ What cannot be concluded here is whether getting the recommended sleep improves 
 
 **Research question 2:**
 
-```{r}
+Does income influence whether someone will get a flu shot?
+
+There are common perceptions that people with higher incomes have more access to health care.  Does the survey support this assumption when it comes to a preventitive flu shot?
+
+Let's start by doing some analysis on incomes in order to better understand our data set.  The INCOME2 column contains a factor variable that already categorizes the survey taker into 8 bins.  I will the factor levels that they have provided and filter out any responders with the values missing.  
+
+FLUSHOT6
+
+```{r q2income}
+incomeANDflu <-
+  brfss2013 %>%
+    filter(!is.na(income2)) %>%
+    filter(!is.na(flushot6)) %>%
+    filter(flushot6 == 'Yes' | flushot6 == 'No') %>%
+    select(income2, flushot6)
+
+summary(incomeANDflu$income2)
+summary(incomeANDflu$flushot6)
+
+incomeANDflugroups <-
+  incomeANDflu %>%
+      filter() %>%
+      group_by(income2, flushot6) %>% 
+      summarise(count = n())
 
 ```
 
 
+```{r q2pivot}
+
+incomeANDflugroups <- dcast(incomeANDflugroups, income2 ~ flushot6, value.var = "count")
+incomeANDflugroups <- incomeANDflugroups %>%
+  mutate(yespercent = Yes / (Yes + No))
+incomeANDflugroups
+```
+
+
+```{r q2plot}
+ggplot(data=incomeANDflugroups, aes(x=income2, y=yespercent)) +
+        ggtitle("Flu Shots Based on Income") +
+        labs(x="Income Category",y="Percent Receiving Flu Shots") +  
+        theme(axis.text.x = element_text(face="bold", color="#0000FF", size=10, angle=45)) +
+        geom_bar(colour="black", fill="#FF0000", stat="identity");
+```
 
 **Research question 3:**
 

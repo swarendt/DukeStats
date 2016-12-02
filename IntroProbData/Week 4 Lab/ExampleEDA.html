@@ -461,9 +461,7 @@ $(document).ready(function () {
 ## 1      NA        NA   NaN     NA     NA</code></pre>
 <p>What went wrong? The reason why all of the results were reported as NAs is that there were some NA entries in the <code>jage</code> variable (people not reporting their age). Since it is not possible to take the average of a series of values that contain <code>NA</code>s, obtaining the numerical summaries requires that we exclude the <code>NA</code>s from the calculation.</p>
 <p>Most numerical summary functions allow us to easily exclude <code>NA</code>s with the <code>na.rm</code> argument. See the help documentation for the <code>median</code> function for more information.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?median</code></pre></div>
-<pre><code>## starting httpd help server ...</code></pre>
-<pre><code>##  done</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ?median</span></code></pre></div>
 <p>An alternative approach is just to <code>filter</code> out the <code>NA</code>s first, and then ask for the numerical summaries:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">filter</span>(!(<span class="kw">is.na</span>(jage))) %&gt;%
