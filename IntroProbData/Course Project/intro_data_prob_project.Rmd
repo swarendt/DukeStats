@@ -13,16 +13,14 @@ output:
 
 The BRFSS is a collection of health related telephone surveys conducted annually.  The BRFSS boasts an annual collection of 400,000 surveys performed each year on a wide variety of health issues and risk behaviors on adult U.S. residents.  The data is collected from all 50 states along with the District of Columbia.
 
-The data can be found online at CDC website.  I am using the 2013 set of data for this analysis.
+The data for several years can be found online at the Centers for Disease Control (CDC) website.  For this project we are using the 2013 data set found [here](http://www.cdc.gov/brfss/annual_data/annual_2013.html).
 
-http://www.cdc.gov/brfss/
-
-Percentage of US Adults who reported Fair or poor health
-https://www.cdc.gov/chronicdisease/resources/publications/aag/brfss.htm
 
 ## Initial setup requirements
 
-Set the enivronments, load all of the necessary libraries and load the full data set.
+Set the enivronments, load all of the necessary libraries and load the full data set.  In the interest of full disclosure, I will be echoing all of my code chunks, even ones that I might normally hide.  This will make for a slightly messier analysis project.
+
+I am using the ggplot2 library to plot some graphs.  I am using dplyr and reshape2 to filter and pivot my results sets.
 
 ```{r set-environment, message=FALSE}
 setwd('C:/Development/R Projects/Duke/IntroProbData/Course Project')
@@ -38,7 +36,7 @@ load("brfss2013.RData")
 
 ## Part 1: Data
 
-The 2013 survey contains a collection of 491775 respondents with 330 facts.  
+The 2013 survey contains a collection of 491775 respondents with 330 facts.  I am loading the entire data set, but as you will be able to see in my question specific data manipulation, I will be limiting to a subset of the data.  I will be echoing all data manipulation commands used in my analysis.
 
 * * *
 
@@ -85,7 +83,7 @@ hist(sleepANDhealth$sleptim1, main = "Histogram of Sleep Time", xlab = "Sleep Ti
 
 The National sleep foundation recommends that adults get between 7 and 9 hours of sleep each day.
 
-Looking over the histogram of sleep times from the survey respondents, I can see that it matches up with the recommendation from the National Sleep Foundation.  Because of this, I am going to create categories for the sleep time as follows (roughly based on the average and the standard deviation):
+Looking over the histogram of sleep times from the survey respondents, I can see that it matches up with the recommendation from the National Sleep Foundation.  Because of this, I am going to create categories for the sleep time as follows (using the recommended sleep times and the standard deviation as a basis for my categories):
 
 Hours of Sleep | Category
 -------------- | -------------
@@ -97,7 +95,7 @@ Hours of Sleep | Category
 
 ```{r q1categories}
 levels <- c(-Inf, 5, 6.8, 9.8, 11.8, Inf)
-labels <- c("Significantly Sleep Deprived", "Sleep Deprived", "Average", "Oversleeping", "Significant Oversleeping")
+labels <- c("0-4", "5-6", "7-9", "10-11", "12-24")
 
 sleepANDhealth <- sleepANDhealth %>% 
   mutate(sleepcat = cut(sleptim1, levels, labels = labels))
@@ -106,7 +104,10 @@ sleepANDhealth <- sleepANDhealth %>%
 
 ```{r q1results}
 table(sleepANDhealth$sleepcat)
-plot(sleepANDhealth$sleepcat, sleepANDhealth$genhlth, xlab = "Sleep Category", ylab = "Feeling of Health")
+plot(sleepANDhealth$sleepcat, sleepANDhealth$genhlth,  
+       xlab = "Hours of Sleep", 
+        ylab = "Feeling of Health")
+
 ```
 
 Conclusions for question 1. Based on the chart above, there does appear to be a correlation between sleep times and the general feeling of health.  As you can see, the Average category (which is the recommending sleep times) has the highest amount of people who rated themselves in good health or better.  As people had more or less sleep than recommended, they were more likely to rate themselves as fair or poor health.
