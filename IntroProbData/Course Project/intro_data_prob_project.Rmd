@@ -1,7 +1,7 @@
 ---
 title: "Exploring the BRFSS data"
 author: Scott Arendt
-date: November 8 2016
+date: December 8 2016
 output: 
   html_document: 
     fig_height: 4
@@ -68,7 +68,7 @@ sleepANDhealth <-
     select(genhlth, sleptim1)
 ```
 
-Running some functions on the sleep time provides us with a median of 7, mean of 7.051 and standard deviation of 1.464587.
+Running some functions on my new sleepANDhealth data set provides me with the some information about the sleep time.  The sleep time (in hours) of the respondents has a median of 7, a mean of 7.051 and standard deviation of 1.464587.
 
 ```{r}
 summary(sleepANDhealth$sleptim1)
@@ -93,6 +93,8 @@ Hours of Sleep | Category
 10 and 11 | Oversleeping
 12 through 24 | Significant oversleeping
 
+I am using the mutate function to create a new column that will identify each respondent in a category.  
+
 ```{r q1categories}
 levels <- c(-Inf, 5, 6.8, 9.8, 11.8, Inf)
 labels <- c("0-4", "5-6", "7-9", "10-11", "12-24")
@@ -103,11 +105,18 @@ sleepANDhealth <- sleepANDhealth %>%
 
 
 ```{r q1results}
+# original.parameters<-par() # Preserve original parameters, about to modify to improve graph
+
 table(sleepANDhealth$sleepcat)
+# par(yaxt="n")
 plot(sleepANDhealth$sleepcat, sleepANDhealth$genhlth,  
        xlab = "Hours of Sleep", 
         ylab = "Feeling of Health")
 
+# lablist.y<-as.vector(c("Excellent", "Very Good", "Good", "Fair", "Poor"))
+# text(labels = lablist.y, srt = 45, pos = 2, xpd = TRUE)
+
+# par(original.parameters)
 ```
 
 Conclusions for question 1. Based on the chart above, there does appear to be a correlation between sleep times and the general feeling of health.  As you can see, the Average category (which is the recommending sleep times) has the highest amount of people who rated themselves in good health or better.  As people had more or less sleep than recommended, they were more likely to rate themselves as fair or poor health.
@@ -215,7 +224,17 @@ To help determine the answer, I decided to use a probability tree and have inser
 
 ![Smoker Decision Tree](GenderSmokingDecisionTree.jpg)
 
-From my drawing above, 
+From my drawing above, I can begin doing my calculation using the Bayes algorithm.
+
+\[
+\begin{eqnarray}
+P(Female~|~Smoker) & = & \frac{P(Female~and~Smoker)}{P(Smoker)}\\
+& = & \frac{0.088}{0.088~+~0.073}\\
+& = & 0.5466
+\end{eqnarray}
+\]
+
+In conclusion, if a randomly selected respondent is a smoker, there is approximately 55% chance that the respondent is female.
 
 ## Appendix A - Code Book
 
