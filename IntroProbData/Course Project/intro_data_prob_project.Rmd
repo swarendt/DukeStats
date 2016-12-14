@@ -15,6 +15,9 @@ The BRFSS is a collection of health related telephone surveys conducted annually
 
 The data for several years can be found online at the Centers for Disease Control (CDC) website.  For this project we are using the 2013 data set found [here](http://www.cdc.gov/brfss/annual_data/annual_2013.html).
 
+The collection methods are based on telephone numbers and the estimate that 97.5% of U.S. households had telephone service in 2012.  This takes into account that many households have moved from having a landline to being covered by cellular phones.  The BRFSS also takes into account a weighting method to handle groups that are underrepresented in the survey.  The details for weighting and sampling methods can be found in [this overview document](https://www.cdc.gov/brfss/annual_data/2013/pdf/overview_2013.pdf).
+
+Because of the level of effort in the annual survey to account for biases, this survey can be generalized to the entire population of the United States.
 
 ## Initial setup requirements
 
@@ -55,7 +58,7 @@ The 2013 survey contains a collection of 491775 respondents with 330 facts.  I a
 
 **Research question 1:**
 
-This survey includes a question about how the respondents feel in general.  I wondered if there is any relationship between getting a good night's sleep and how people responded about their health.  For this question, I did some research and found that the National Sleep Foundation recommends that adults get between 7 and 9 hours of sleep per night.  This is what I will call "a good night's sleep" for my research.
+This survey includes a question about how the respondents feel in general.  I wondered if there is any relationship between getting a good night's sleep and how people responded about their health. Is there any difference between genders?  For this question, I did some research and found that the National Sleep Foundation recommends that adults get between 7 and 9 hours of sleep per night.  This is what I will call an "Average" night's sleep for my research.
 
 The first thing that I am doing is creating a clean data set of just two facts: the general health status and the sleep time.  I am cleaning the data by removing all records that have NA for either column.  I am also removing all records that have a sleep time greater than 24 (there were 2).  These have been removed because they are obviously erroneous.  It also seems implausible that records with 0 or 24 hours daily are valid, but I do not have enough information to make a determination on them.  I am choosing to leave them in my data set.
 
@@ -64,8 +67,9 @@ sleepANDhealth <-
   brfss2013 %>%
     filter(!is.na(genhlth)) %>%
     filter(!is.na(sleptim1)) %>%
+    filter(!is.na(sex)) %>%
     filter(sleptim1 <= 24) %>%
-    select(genhlth, sleptim1)
+    select(sex, genhlth, sleptim1)
 ```
 
 Running some functions on my new sleepANDhealth data set provides me with the some information about the sleep time.  The sleep time (in hours) of the respondents has a median of 7, a mean of 7.051 and standard deviation of 1.464587.
@@ -93,7 +97,7 @@ Hours of Sleep | Category
 10 and 11 | Oversleeping
 12 through 24 | Significant oversleeping
 
-I am using the mutate function to create a new column that will identify each respondent in a category.  
+I am using the mutate function to create a new column that will identify each respondent in a category.  I am then further mutating to come up with a percentages representing a grouping by sleep category, sex and health.  It is this column that will be used to generate the graphs.
 
 ```{r q1categories}
 levels <- c(-Inf, 5, 6.8, 9.8, 11.8, Inf)
@@ -101,27 +105,26 @@ labels <- c("0-4", "5-6", "7-9", "10-11", "12-24")
 
 sleepANDhealth <- sleepANDhealth %>% 
   mutate(sleepcat = cut(sleptim1, levels, labels = labels))
+
+sleepANDhealthgroups <- sleepANDhealth %>%
+  count(sleepcat, sex, genhlth) %>%
+    mutate(catpercent = n / sum(n))
 ```
 
 
 ```{r q1results}
-# original.parameters<-par() # Preserve original parameters, about to modify to improve graph
+ggplot(sleepANDhealthgroups, aes(x=sleepcat, y=catpercent, fill = genhlth)) +
+  geom_bar(stat="identity") + facet_wrap(~ sex, ncol=2) +
+  xlab("Sleep Category") + ylab("Percent") + labs(fill="General Health")
+  
 
-table(sleepANDhealth$sleepcat)
-# par(yaxt="n")
-plot(sleepANDhealth$sleepcat, sleepANDhealth$genhlth,  
-       xlab = "Hours of Sleep", 
-        ylab = "Feeling of Health")
-
-# lablist.y<-as.vector(c("Excellent", "Very Good", "Good", "Fair", "Poor"))
-# text(labels = lablist.y, srt = 45, pos = 2, xpd = TRUE)
-
-# par(original.parameters)
 ```
 
-Conclusions for question 1. Based on the chart above, there does appear to be a correlation between sleep times and the general feeling of health.  As you can see, the Average category (which is the recommending sleep times) has the highest amount of people who rated themselves in good health or better.  As people had more or less sleep than recommended, they were more likely to rate themselves as fair or poor health.
+**Question 1 conclusion:**
 
-What cannot be concluded here is whether getting the recommended sleep improves health or if better health improves sleep times.  It is cannot be concluded whether there is another factor that affects both.
+Based on the chart above, there does appear to be a correlation between sleep times and the general feeling of health.  As you can see, the "7-9" (Average) category (which is the recommending sleep times) has the highest amount of people who rated themselves in good health or better.  As people had more or less sleep than recommended, they were more likely to rate themselves as fair or poor health.  There are some slight but not significant differences between males and females.  
+
+What cannot be concluded here is whether getting the recommended sleep improves health or if better health improves sleep times.  That is, while there may be correlation between the two variables, I do not have enough information to determine causation.
 
 **Research question 2:**
 
@@ -131,7 +134,6 @@ There are common perceptions that people with higher incomes have more access to
 
 Let's start by doing some analysis on incomes in order to better understand our data set.  The INCOME2 column contains a factor variable that already categorizes the survey taker into 8 bins.  I will the factor levels that they have provided and filter out any responders with the values missing.  
 
-FLUSHOT6
 
 ```{r q2income}
 incomeANDflu <-
@@ -161,6 +163,7 @@ incomeANDflugroups <- incomeANDflugroups %>%
 incomeANDflugroups
 ```
 
+Finally, I can plot a bar plot showing the relation between income and flu shots.
 
 ```{r q2plot}
 ggplot(data=incomeANDflugroups, aes(x=income2, y=yespercent)) +
@@ -170,11 +173,17 @@ ggplot(data=incomeANDflugroups, aes(x=income2, y=yespercent)) +
         geom_bar(colour="black", fill="#FF0000", stat="identity");
 ```
 
+**Question 2 conclusion:**
+
+I found from my research here that there is a signficant difference between income levels when reviewing the likelihood of receiving a flu shot.  As the income rises, the person is more likely to have been given a flu shot.  The 36% of the lowest income category had received flu shots, while 50% of the highest income group had received them.  If I had more time to investigate, it would be interesting to try and determine why there is such a difference.
+
 **Research question 3:**
 
 If I choose a random survey respondent who smokes, what is the probability of the respondent being a female?
 
-I will create another new data set for my data analysis.  I am going to remove all records that do not have the gender selected (this removes 7 records).  Determining whether someone is a smoker and that we have valid data is a little more complicated.  The SMOKE100 column indicates whether someone has smoked 100 cigarettes in their lifetime.  Values other than 1 or 2 have no meaning in my analysis and so I will filter them out.
+The answer to this question is interesting to me because of the people that I know who are smokers, a large portion of them are women.
+
+I will create another new data set for my data analysis.  This one is also dependent upon three variables, gender, smoke100 and smokday2.  I am going to remove all records that do not have the gender selected (this removes 7 records).  Determining whether someone is a smoker and that we have valid data is a little more complicated.  The SMOKE100 column indicates whether someone has smoked 100 cigarettes in their lifetime.  Values other than 1 or 2 have no meaning in my analysis and so I will filter them out.
 
 The data related to smoking is a little bit confusing.  So I am outlining the decisions that I have made on how to interpret the data.
 
@@ -186,7 +195,7 @@ smoke100 | smokday2 | Smoker
 1 | 3 | No, these are former smokers.
 1 | 1 and 2 | Yes
 
-Once these filters are in place, we are left with a total of 476442 records.
+Once these filters are in place, we are left with a total of 476442 records.  
 
 ```{r q3filtering}
 
@@ -234,52 +243,87 @@ P(Female~|~Smoker) & = & \frac{P(Female~and~Smoker)}{P(Smoker)}\\
 \end{eqnarray}
 \]
 
+**Question 3 conclusion:**
+
 In conclusion, if a randomly selected respondent is a smoker, there is approximately 55% chance that the respondent is female.
 
 ## Appendix A - Code Book
 
 I am listing a subset of the code book, describing only the columns that I used in my analysis.  It would be impractical to include the entire code book in this Appendix.
 
-General Health
-Section: 1.1 Health Status Type: Num
-Column: 80 SAS Variable Name: GENHLTH
-Prologue:
+Health Status
+Variable Name: GENHLTH
 Description: Would you say that in general your health is:
+Value | Value Label
+1 | Excellent
+2 | Very good
+3 | Good
+4 | Fair
+5 | Poor
+7 | Don't know/Not sure
+9 | Refused
+BLANK | Not asked or Missing
 
-Value Value Label
-1     Excellent
-2     Very good
-3     Good
-4     Fair
-5     Poor
-7     Don't know/Not Sure
-9     Refused
-BLANK Not asked or Missing
+Inadequate Sleep
+Variable Name: SLEPTIM1
+Description: How Much Time Do You Sleep?
+Value | Value Label
+1 - 24 | Number of hours [1-24]
+77 | Don't know/Not Sure
+99 | Refused 
 
-
-How Much Time Do You Sleep
-Section: 4.1 Inadequate Sleep Type: Num
-Column: 91-92 SAS Variable Name: SLEPTIM1
-Prologue: I would like to ask you about your sleep pattern.
-Description: On average, how many hours of sleep do you get in a 24-hour period?
-Weighted
-Value   Value Label
-1 - 24  Number of hours [1-24]
-77      Don't know/Not Sure
-99      Refused 
-
+Income Level 
+Variable Name: INCOME2
+Description: Is your income from all sources
+Value | Value Label 
+1 | Less than $10,000
+2 | Less than $15,000 ($10,000 to less than $15,000)
+3 | Less than $20,000 ($15,000 to less than $20,000)
+4 | Less than $25,000 ($20,000 to less than $25,000)
+5 | Less than $35,000 ($25,000 to less than $35,000)
+6 | Less than $50,000 ($35,000 to less than $50,000)
+7 | Less than $75,000 ($50,000 to less than $75,000)
+8 | $75,000 or more
+77 | Don't know/Not sure
+99 | Not asked or missing
 
 Respondents Sex
-Section: 8.21 Demographics Type: Num
-Column: 178 SAS Variable Name: SEX
-Prologue:
+Variable Name: SEX
 Description: Indicate sex of respondent.
-Value 
-Percentage
-1   Male
-2   Female
+Value | Value Label 
+1 | Male
+2 | Female
+
+Adult flu shot/spray past 12 months
+Variable Name: FLUSHOT6
+Description: During the past 12 months, have you had either a flu shot or a flu vaccine that was sprayed in your nose?
+Value | Value Label
+1 | Yes
+2 | No
+7 | Don't know/Not sure
+9 | Refused
+BLANK | Not asked or missing
+
+Smoked at leastr 100 cigarettes
+Variable Name: SMOKE100
+Description: Have you smoked at least 100 cigarettes in your entire life?
+Value | Value Label
+1 | Yes
+2 | No
+7 | Don't know/Not sure
+9 | Refused
+BLANK | Not asked or missing
+
+Frequency of Days Not Smoking
+Variable Name: SMOKDAY2
+Description: Do you now smoke cigarettes every day, some days, or not at all?
+Value | Value Label
+1 | Every Day
+2 | Some days
+3 | Not at all
+7 | Don't know/Not sure
+9 | Refused
+BLANK | Not asked or missing
 
 
-
-The complete code book is found on the CDC website here:
-http://www.cdc.gov/brfss/annual_data/2013/pdf/codebook13_llcp.pdf
+The complete code book is found on the CDC website [here]:(http://www.cdc.gov/brfss/annual_data/2013/pdf/codebook13_llcp.pdf)
